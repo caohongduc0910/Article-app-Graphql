@@ -1,9 +1,11 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
-import databaseConnection from "./database/db.config";
 import { ApolloServer, gql } from "apollo-server-express";
-import typeDefs from "./typeDefs";
-import resolvers from "./resolvers";
+
+import databaseConnection from "./database/db.config";
+import typeDefs from "./typeDefs/index.typeDefs";
+import resolvers from "./resolvers/index.resolvers";
+import authMiddleware from "./middlewares/auth.middlewares";
 
 const startServer = async () => {
   const app: Express = express();
@@ -14,12 +16,18 @@ const startServer = async () => {
 
   databaseConnection();
 
+  app.use("/graphql", authMiddleware);
+
   const apolloServer = new ApolloServer({
-    typeDefs,
-    resolvers,
+    typeDefs: typeDefs,
+    resolvers: resolvers,
+    context: ({ req }) => {
+      return { ...req };
+    },
   });
 
   await apolloServer.start();
+
   apolloServer.applyMiddleware({
     app: app,
     path: "/graphql",
@@ -32,4 +40,4 @@ const startServer = async () => {
   });
 };
 
-startServer()
+startServer();

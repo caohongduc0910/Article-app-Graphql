@@ -1,11 +1,10 @@
 import { Schema, model } from "mongoose"
 
-const article = new Schema(
+const category = new Schema(
   {
     title: String,
     avatar: String,
     description: String,
-    categoryId: String,
     deleted: {
       type: Boolean,
       default: false
@@ -17,6 +16,6 @@ const article = new Schema(
   }
 )
 
-const Article = model("Article", article, "articles")
+const Category = model("Category", category, "categories")
 
-export default Article
+export default Category
